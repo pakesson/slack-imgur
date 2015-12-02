@@ -22,6 +22,15 @@ def random_link_from_gallery_list(gallery_list, client):
 
     return choice.link
 
+def first_link_from_gallery_list(gallery_list, client):
+    choice = gallery_list[0]
+
+    if choice.is_album:
+        images = client.get_album_images(choice.id)
+        choice = images[0]
+
+    return choice.link
+
 def get_imgur_image(text):
     client_id = os.environ.get('IMGUR_CLIENT_ID')
     client_secret = os.environ.get('IMGUR_CLIENT_SECRET')
@@ -33,7 +42,7 @@ def get_imgur_image(text):
         if not result:
             return "No matching image found"
 
-        return random_link_from_gallery_list(result, client)
+        return first_link_from_gallery_list(result, client)
 
 
 @app.route('/', methods=['GET', 'POST'])
