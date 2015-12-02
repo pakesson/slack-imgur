@@ -13,7 +13,6 @@ from imgurpython.helpers.error import ImgurClientError
 
 app = Flask(__name__)
 
-
 def random_link_from_gallery_list(gallery_list, client):
     choice = random.choice(gallery_list)
 
@@ -23,27 +22,18 @@ def random_link_from_gallery_list(gallery_list, client):
 
     return choice.link
 
-
 def get_imgur_image(text):
     client_id = os.environ.get('IMGUR_CLIENT_ID')
     client_secret = os.environ.get('IMGUR_CLIENT_SECRET')
 
     if client_id and client_secret:
-
         client = ImgurClient(client_id, client_secret)
-        tag = tag_from_text(text)
 
-        if tag:
-            try:
-                gallery = client.gallery_tag(tag)
-                gallery = gallery.items
-            except ImgurClientError:
-                return 'Tag {} not found'.format(tag)
-        else:
+        result = client.gallery_search(query_string_from_text(text))
+        if not result:
+            return "No matching image found"
 
-            gallery = client.gallery()
-
-        return random_link_from_gallery_list(gallery, client)
+        return random_link_from_gallery_list(result, client)
 
 
 @app.route('/', methods=['GET', 'POST'])
