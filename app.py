@@ -38,7 +38,7 @@ def get_imgur_image(text):
     if client_id and client_secret:
         client = ImgurClient(client_id, client_secret)
 
-        result = client.gallery_search(query_string_from_text(text))
+        result = client.gallery_search(query_string_from_text(text),sort='top')
         if not result:
             return "No matching image found"
 
