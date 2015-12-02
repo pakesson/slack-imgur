@@ -6,7 +6,7 @@ from flask import jsonify
 from flask import render_template
 import os
 import random
-from utils import tag_from_text
+from utils import query_string_from_text
 
 from imgurpython import ImgurClient
 from imgurpython.helpers.error import ImgurClientError
