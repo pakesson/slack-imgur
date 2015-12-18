@@ -6,12 +6,15 @@ from flask import jsonify
 from flask import render_template
 import os
 import random
+import re
 from utils import query_string_from_text
 
 from imgurpython import ImgurClient
 from imgurpython.helpers.error import ImgurClientError
 
 app = Flask(__name__)
+
+subreddit_pattern = re.compile("^/r/(\w+)/?$")
 
 def random_link_from_gallery_list(gallery_list, client):
     choice = random.choice(gallery_list)
@@ -38,11 +41,21 @@ def get_imgur_image(text):
     if client_id and client_secret:
         client = ImgurClient(client_id, client_secret)
 
-        result = client.gallery_search(query_string_from_text(text),sort='top')
+        query_string = query_string_from_text(text)
+        subreddit_match = subreddit_pattern.match(query_string)
+
+        if subreddit_match:
+            subreddit = subreddit_match.group(1)
+            result = client.subreddit_gallery(subreddit)
+            result = random_link_from_gallery_list(result, client)
+        else:
+            result = client.gallery_search(query_string, sort='top')
+            result = first_link_from_gallery_list(result, client)
+
         if not result:
             return "No matching image found"
 
-        return first_link_from_gallery_list(result, client)
+        return result
 
 
 @app.route('/', methods=['GET', 'POST'])
