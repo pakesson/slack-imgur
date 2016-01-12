@@ -17,6 +17,9 @@ app = Flask(__name__)
 subreddit_pattern = re.compile("^/r/(\w+)/?$")
 
 def random_link_from_gallery_list(gallery_list, client):
+    if not gallery_list:
+        return None
+
     choice = random.choice(gallery_list)
 
     if choice.is_album:
@@ -26,6 +29,9 @@ def random_link_from_gallery_list(gallery_list, client):
     return choice.link
 
 def first_link_from_gallery_list(gallery_list, client):
+    if not gallery_list:
+        return None
+
     choice = gallery_list[0]
 
     if choice.is_album:
